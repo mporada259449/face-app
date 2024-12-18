@@ -1,19 +1,34 @@
 <html>
 <head>
     <title>Admin Page</title>
-    <form action="/logout" method="GET">
+    <form action="/logout" method="get">
         <button type="submit">Log Out</button>
     </form>
     <br><br>
-    <form action="/set_threshold" method="post" enctype="multipart/form-data">
+    <a href="/logout" class="button">Logout</a>
+    <br><br>
+    <form action="/set_threshold" method="post">
         <label for="username">Set threshold:</label>
         <input type="number" id="threshold" name="threshold" max='100' min='70' value='70' required>
         <button type="submit">set</button>
     </form>
-    <form action="/login" method="post" enctype="multipart/form-data">
-        <label for="username">Set threshold:</label>
-        <input type="number" id="threshold" name="threshold" max='100' min='70' value='70' required>
-        <button type="submit">set</button>
+    <br><br>
+    <form action="/logs" method="get">
+        <select name="msg_type" id="msg_type">
+            <option value="all">All</option>
+            <option value="auth">Auth</option>
+            <option value="app">App</option>
+            <option value="admin">Admin</option>
+        </select>
+        <button type="submit">See logs</button>
     </form>
+
+    {% if events %}
+        <ul>
+            {% for timestamp, category, message in events %}
+                <li class="{{ category }}">{{ timestamp}} {{ category }} {{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 </head>
 </html>
