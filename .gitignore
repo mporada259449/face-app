@@ -1,4 +1,6 @@
 venv/
+venv-api/
+mnt/
 *.pyc
 __pycache__/
 .env
