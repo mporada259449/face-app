@@ -5,5 +5,3 @@ mnt/
 __pycache__/
 .env
 migrations/
-
-src/models/checkpoints/w600k_r50.onnx

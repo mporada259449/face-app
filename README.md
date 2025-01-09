@@ -1,7 +1,7 @@
 ## FAST USAGE
 
 ### Build fastapi service
-`cd src`
+`cd src_models`
 
 `uvicorn main:app --reload --host 0.0.0.0 --port 8001`
 
