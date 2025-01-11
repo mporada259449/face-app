@@ -12,22 +12,28 @@ def admin_page():
         return redirect(url_for('views.hello'))
     
 @adminview.route('/set_threshold', methods=['POST'])
-def set_treshold():
+def set_threshold():
     if not session.get('is_admin'):
         flash("You don't have permissions to do that")
-        redirect(url_for('viwes.hello'))
+        return redirect(url_for('viwes.hello'))
     
     data = request.form
     threshold = data.get('threshold')
-    print(f"Threshold will be set to {threshold}")
+    threshold = int(threshold)/100
     
-    result = requests.post('http://127.0.0.1:5000/set_threshold', json={'threshold': threshold}, headers={"Content-Type": "application/json"})
-    if result:
+    url = 'http://127.0.0.1:5000/set_threshold'
+    json_data = {'threshold': threshold}
+
+    result = requests.post(url, json=json_data, headers={"Content-Type": "application/json"})
+
+    if result.status_code == 200:
         log_event(msg=f'Admin changed the value of threshold to {threshold}', msg_type='admin')
         flash("Success")
-        redirect((url_for('admin.admin_page')))
-
-    return "Success"
+        return redirect(url_for('admin.admin_page'))
+    else:
+        log_event(msg=f'Attempt to set the threshold to {threshold} failed', msg_type='admin')
+        flash("Setting threshold failed")
+        return redirect(url_for('admin.admin_page'))
 
 @adminview.route('/logs', methods=['POST'])
 def see_logs():

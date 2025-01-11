@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, redirect, flash, url_for, request
+from flask import Blueprint, render_template, session, redirect, flash, url_for, request, json
 from werkzeug.utils import secure_filename
 from .logging import log_event
 import requests
@@ -7,12 +7,19 @@ import uuid
 views = Blueprint('views', __name__) 
 
 UPLOAD_FLODER='/home/dev/face-app/mnt/images/'
-ALLOWED_EXTENSIONS=['.jpg', 'png', 'jpeg',]
+ALLOWED_EXTENSIONS=['jpg', 'png', 'jpeg', 'webp']
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def send_compare_request(img_path_1, img_path_2):
+    url = 'http://127.0.0.1:5000/faceapp/compare'
+    files = {'image1': open(img_path_1, 'rb'), 'image2': open(img_path_2, 'rb')}
+    log_event(msg=f'Request was sand to model to compare images: {img_path_1}, {img_path_2}', msg_type='app')
+    result = requests.post(url, files=files)
+    result_text = json.loads(result.content.decode()) 
+    return result_text
 
 @views.route('/')
 def hello():
@@ -21,27 +28,38 @@ def hello():
 @views.route('/compare_images', methods=['POST'])
 def compare_images():
     if not request.files:
+        log_event(msg=f'There was an attempt to compere images', msg_type='app')
         flash('No file was provided')
         redirect(request.url)
 
-    if session.get('subdir', False):
-        subdir = session['subdir']
-    else:
-        subdir = uuid.uuid4().hex
-        session['subdir'] = subdir
+    #if session.get('subdir', False):
+    #    subdir = session['subdir']
+    #else:
+    #    subdir = uuid.uuid4().hex
+    #    session['subdir'] = subdir
+    subdir = uuid.uuid4().hex
     
     if not os.path.exists(os.path.join(UPLOAD_FLODER, subdir)):
         os.mkdir(os.path.join(UPLOAD_FLODER, subdir))
-
+    saved_files = []
     for key, file in request.files.items():
-        print(key, file.filename)
         if file.filename == '':
             flash('No selected file')
+            log_event(msg=f'There was an attempt to compere images', msg_type='app')
             redirect(request.url)
         if file and allowed_file(file.filename):
             _, extension = os.path.splitext(file.filename)
             filename = secure_filename(key) + extension
-            file.save(os.path.join(UPLOAD_FLODER, subdir, filename))
+            img_path = os.path.join(UPLOAD_FLODER, subdir, filename)
+            file.save(img_path)
+            saved_files.append(img_path)
     
-    flash("Files are proccesed by our model")
+    #flash("Files are proccesed by our model")
+    result = send_compare_request(img_path_1=saved_files[0], img_path_2=saved_files[1])
+
+    if result['is_similar']:
+        flash(f"Similarity_score: {result['similarity_score']}. This is the same person")
+    else:
+        flash(f"Similarity_score: {result['similarity_score']}. This is not the same person")
+    log_event(msg=f"Files {saved_files[0]}, {saved_files[1]} were compared with score {result['similarity_score']}", msg_type='app')
     return redirect(url_for('views.hello'))
