@@ -23,19 +23,19 @@ Change numpy in requirements.in to numpy<2.0.0. & python_magic to python-magic-b
 
 `docker run -p 5432:5432 -d --name flask-db -e POSTGRES_PASSWORD=admin -e POSTGRES_USER=admin -e POSTGRES_DB=app-db -v flask-app-data:/var/lib/postgresql/data postgres:17-bullseye`
 
-# Setting variables
+### Setting variables
 `DATABASE_ADRESS=127.0.0.1`
 
-# DB migration init
+### DB migration init
 `flask db init`
 
-# DB schema revision
+### DB schema revision
 `flask db migrate`
 
-# DB upgrade
+### DB upgrade
 `flask db upgrade`
 
-# Admin initialization
+### Admin initialization
 `docker exec -it containername psql -U admin -d app-db`
 `INSERT INTO users (username, password, is_admin, id) VALUES ('admin', 'securepassword', true, 1);`
 
