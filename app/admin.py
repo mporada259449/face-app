@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, session, redirect, flash, url_for, request
+import requests
 from .logging import get_event, log_event
 adminview = Blueprint('admin', __name__) 
 
@@ -20,8 +21,11 @@ def set_treshold():
     threshold = data.get('threshold')
     print(f"Threshold will be set to {threshold}")
     
-    #tutaj trzeba to wysłać do modelu
-    log_event(msg=f'Admin changed the value of threshold to {threshold}', msg_type='admin')
+    result = requests.post('http://127.0.0.1:5000/set_threshold', json={'threshold': threshold}, headers={"Content-Type": "application/json"})
+    if result:
+        log_event(msg=f'Admin changed the value of threshold to {threshold}', msg_type='admin')
+        flash("Success")
+        redirect((url_for('admin.admin_page')))
 
     return "Success"
 
