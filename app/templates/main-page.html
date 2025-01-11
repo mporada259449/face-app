@@ -28,13 +28,13 @@
             <button type="submit">Login</button>
         </form>
     {% endif %}
-    <form action="/compare_images" method="post">
+    <form action="/compare_images" method="post" enctype='multipart/form-data' encoding='multipart/form-data'>
         <label for="image1">Upload Image 1:</label>
-        <input type="file" id="image1" name="image1" accept="image/*" required>
+        <input type="file" id="image1"  name='image1' required>
         <br><br>
 
         <label for="image2">Upload Image 2:</label>
-        <input type="file" id="image2" name="image2" accept="image/*" required>
+        <input type="file" id="image2" name='image2' required>
         <br><br>
 
         <button type="submit">Compare</button>
