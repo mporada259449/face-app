@@ -7,4 +7,4 @@ class Config:
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = 'secret'
-    CSRF_ENABLED = True
+    CSRF_ENABLED = False

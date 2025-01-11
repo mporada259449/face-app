@@ -1,19 +1,15 @@
 <html>
 <head>
     <title>Admin Page</title>
-    <form action="/logout" method="get">
-        <button type="submit">Log Out</button>
-    </form>
-    <br><br>
     <a href="/logout" class="button">Logout</a>
     <br><br>
     <form action="/set_threshold" method="post">
         <label for="username">Set threshold:</label>
-        <input type="number" id="threshold" name="threshold" max='100' min='70' value='70' required>
+        <input type="number" id="threshold" name="threshold" max='100' min='0' value='70' required>
         <button type="submit">set</button>
     </form>
     <br><br>
-    <form action="/logs" method="get">
+    <form action="/logs" method="post">
         <select name="msg_type" id="msg_type">
             <option value="all">All</option>
             <option value="auth">Auth</option>
