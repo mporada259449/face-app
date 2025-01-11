@@ -6,7 +6,7 @@ import os
 import uuid
 views = Blueprint('views', __name__) 
 
-UPLOAD_FLODER='/home/dev/face-app/mnt/images/'
+UPLOAD_FLODER='/mnt/images/'
 ALLOWED_EXTENSIONS=['jpg', 'png', 'jpeg', 'webp']
 
 def allowed_file(filename):
@@ -14,7 +14,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def send_compare_request(img_path_1, img_path_2):
-    url = 'http://127.0.0.1:5000/faceapp/compare'
+    url = 'http://model:5000/faceapp/compare'
     files = {'image1': open(img_path_1, 'rb'), 'image2': open(img_path_2, 'rb')}
     log_event(msg=f'Request was sand to model to compare images: {img_path_1}, {img_path_2}', msg_type='app')
     result = requests.post(url, files=files)

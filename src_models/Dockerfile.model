@@ -1,6 +1,5 @@
 FROM python:3.11
 
-
 COPY . /app/src_models
 WORKDIR /app/src_models
 RUN  apt update && apt install libgl1-mesa-glx -y

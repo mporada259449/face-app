@@ -21,7 +21,7 @@ def set_threshold():
     threshold = data.get('threshold')
     threshold = int(threshold)/100
     
-    url = 'http://127.0.0.1:5000/set_threshold'
+    url = 'http://model:5000/set_threshold'
     json_data = {'threshold': threshold}
 
     result = requests.post(url, json=json_data, headers={"Content-Type": "application/json"})
