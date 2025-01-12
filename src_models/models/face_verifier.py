@@ -4,14 +4,14 @@ import onnxruntime
 from typing import Tuple
 from .paths import ModelPaths
 
-class ArcFaceBackbone:
+class FaceEmbedderBackbone:
     """
-    A class representing the ArcFace model for extracting facial embeddings.
+    A class representing the FaceEmbedder model for extracting facial embeddings.
     """
 
-    def __init__(self, model_path: str = ModelPaths.ARCFACE.value):
+    def __init__(self, model_path: str = ModelPaths.FACE_EMBEDDER.value):
         """
-        Initialize the ArcFace backbone.
+        Initialize the FaceEmbedder backbone.
 
         Parameters:
         - model_path (str): Path to the ONNX model file.
@@ -36,17 +36,17 @@ class ArcFaceBackbone:
 
 class SiameseNetwork:
     """
-    A class representing a Siamese network using the ArcFace backbone.
+    A class representing a Siamese network using the FaceEmbedder backbone.
     """
 
-    def __init__(self, arcface_backbone: ArcFaceBackbone):
+    def __init__(self, face_embedder_backbone: FaceEmbedderBackbone):
         """
         Initialize the Siamese network.
 
         Parameters:
-        - arcface_backbone (ArcFaceBackbone): An instance of the ArcFace backbone.
+        - face_embedder_backbone (FaceEmbedderBackbone): An instance of the FaceEmbedder backbone.
         """
-        self.arcface_backbone: ArcFaceBackbone = arcface_backbone
+        self.face_embedder_backbone: FaceEmbedderBackbone = face_embedder_backbone
 
     def forward(self, image1: np.ndarray, image2: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         """
@@ -59,20 +59,20 @@ class SiameseNetwork:
         Returns:
         - Tuple[np.ndarray, np.ndarray]: Embeddings for both input images.
         """
-        embedding1: np.ndarray = self.arcface_backbone.forward(image1)
-        embedding2: np.ndarray = self.arcface_backbone.forward(image2)
+        embedding1: np.ndarray = self.face_embedder_backbone.forward(image1)
+        embedding2: np.ndarray = self.face_embedder_backbone.forward(image2)
         return embedding1, embedding2
 
 
 def preprocess_image_direct(image: np.ndarray) -> np.ndarray:
     """
-    Preprocess a NumPy image directly for the ArcFace model.
+    Preprocess a NumPy image directly for the FaceEmbedder model.
 
     Parameters:
     - image (np.ndarray): Input image (H, W, C) in RGB format.
 
     Returns:
-    - np.ndarray: Preprocessed image suitable for ArcFace input.
+    - np.ndarray: Preprocessed image suitable for FaceVerifier input.
     """
     # Resize to 112x112
     resized_image: np.ndarray = cv2.resize(image, (112, 112))

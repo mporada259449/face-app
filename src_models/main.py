@@ -13,7 +13,7 @@ from request_utils import process_image
 
 
 # Initialize a global threshold
-current_threshold: float = 0.5  # Default threshold
+current_threshold: float = 0.7  # Default threshold
 
 
 @asynccontextmanager
@@ -91,12 +91,23 @@ async def compare_faces(
         # Compute embeddings and similarity score
         embedding1, embedding2 = FACE_VERIFIER.forward(*preprocessed_images)
         similarity_score: float = float(cosine_similarity(embedding1, embedding2))
+        similarity_score: float = (similarity_score+1)/2
         is_similar: bool = similarity_score >= current_threshold
 
         return JSONResponse(
             content={"similarity_score": similarity_score, "is_similar": is_similar}
         )
     except HTTPException as he:
-        raise he
+        return JSONResponse(
+            status_code=he.status_code,
+            content={"error": he.detail, "correlation_id": correlation_id}
+        )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Internal Server Error",
+                "details": str(e),
+                "correlation_id": correlation_id
+            }
+        )

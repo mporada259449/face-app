@@ -1,6 +1,9 @@
 # import torch
-import numpy as np
 import cv2
+import numpy as np
+
+from fastapi import HTTPException
+
 from models import FACE_DETECTOR, FACE_LANDMARKER
 
 # def get_device() -> str:
@@ -46,15 +49,13 @@ def detect_align_crop_face(image):
     #PROPER
     landmarks = FACE_LANDMARKER.detect_landmarks(image)
     if landmarks is None or landmarks.size == 0 or np.any(landmarks == None):
-        print("No valid landmarks detected!")
-        exit()
+        raise HTTPException(status_code=400, detail="No valid landmarks detected!")
 
     aligned_image, aligned_landmarks = align_face(image, landmarks)
 
     face_coords = FACE_DETECTOR.detect_face(aligned_image)
     if not face_coords:
-        print("No face detected!")
-        exit()
+        raise HTTPException(status_code=400, detail="No face detected!")
 
     aligned_facial_image = FACE_DETECTOR.crop_face(aligned_image, face_coords)
 
@@ -65,34 +66,6 @@ def detect_align_crop_face(image):
     # # Display the result
     # facial_image = cv2.cvtColor(facial_image, cv2.COLOR_RGB2BGR)
     # cv2.imshow("Cropped Face with Landmarks", facial_image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
-
-    return aligned_facial_image, aligned_landmarks
-
-def detect_crop_align_face(image):
-    face_coords = FACE_DETECTOR.detect_face(image)
-    if not face_coords:
-        print("No face detected!")
-        exit()
-
-    facial_image = FACE_DETECTOR.crop_face(image, face_coords)
-
-
-    landmarks = FACE_LANDMARKER.detect_landmarks(facial_image)
-    if landmarks is None or landmarks.size == 0 or np.any(landmarks == None):
-        print("No valid landmarks detected!")
-        exit()
-
-    aligned_facial_image, aligned_landmarks = align_face(facial_image, landmarks)
-
-    # # Draw landmarks
-    # for x, y in aligned_landmarks:
-    #     cv2.circle(aligned_facial_image, (int(x), int(y)), 2, (0, 255, 0), -1)
-
-    # # Display the result
-    # aligned_facial_image = cv2.cvtColor(aligned_facial_image, cv2.COLOR_RGB2BGR)
-    # cv2.imshow("Cropped Face with Landmarks", aligned_facial_image)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
 

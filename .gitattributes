@@ -1,1 +1,1 @@
-src_models/models/checkpoints/w600k_r50.onnx filter=lfs diff=lfs merge=lfs -text
+src_models/models/checkpoints/face_embedder.onnx filter=lfs diff=lfs merge=lfs -text
