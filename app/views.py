@@ -53,13 +53,19 @@ def compare_images():
             img_path = os.path.join(UPLOAD_FLODER, subdir, filename)
             file.save(img_path)
             saved_files.append(img_path)
+        else:
+            flash("Unsupported filetype")
+            return redirect(url_for('views.hello'))
     
-    #flash("Files are proccesed by our model")
     result = send_compare_request(img_path_1=saved_files[0], img_path_2=saved_files[1])
 
-    if result['is_similar']:
+    if "is_similar" not in result.keys():
+        log_event(msg=f"Files {saved_files[0]}, {saved_files[1]} were compared. Face waren't detected", msg_type='app')
+        flash("It is not image of human face")
+    elif result['is_similar']:
+        log_event(msg=f"Files {saved_files[0]}, {saved_files[1]} were compared with score {result['similarity_score']}", msg_type='app')
         flash(f"Similarity_score: {result['similarity_score']}. This is the same person")
     else:
+        log_event(msg=f"Files {saved_files[0]}, {saved_files[1]} were compared with score {result['similarity_score']}", msg_type='app')
         flash(f"Similarity_score: {result['similarity_score']}. This is not the same person")
-    log_event(msg=f"Files {saved_files[0]}, {saved_files[1]} were compared with score {result['similarity_score']}", msg_type='app')
     return redirect(url_for('views.hello'))
