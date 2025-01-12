@@ -95,19 +95,32 @@ async def compare_faces(
         is_similar: bool = similarity_score >= current_threshold
 
         return JSONResponse(
-            content={"similarity_score": similarity_score, "is_similar": is_similar}
+            status_code=200,
+            content={
+                "status_code": 200,
+                "similarity_score": similarity_score,
+                "is_similar": is_similar,
+                "correlation_id": correlation_id,
+            },
         )
     except HTTPException as he:
+        # Handle HTTP exceptions
         return JSONResponse(
             status_code=he.status_code,
-            content={"error": he.detail, "correlation_id": correlation_id}
+            content={
+                "status_code": he.status_code,
+                "error": he.detail,
+                "correlation_id": correlation_id,
+            },
         )
     except Exception as e:
+        # Handle all other exceptions
         return JSONResponse(
             status_code=500,
             content={
+                "status_code": 500,
                 "error": "Internal Server Error",
                 "details": str(e),
-                "correlation_id": correlation_id
-            }
+                "correlation_id": correlation_id,
+            },
         )

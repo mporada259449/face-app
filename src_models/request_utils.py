@@ -61,7 +61,10 @@ def process_image_sync(image: np.ndarray) -> np.ndarray:
         preprocessed_image = preprocess_image_direct(aligned_image)
         return preprocessed_image
     except Exception as e:
-        raise ValueError(f"Error during image preprocessing: {str(e)}")
+        raise HTTPException(
+        status_code=400,
+        detail=f"Error during image preprocessing: {str(e)}"
+    )
 
 
 async def process_image(file: UploadFile) -> np.ndarray:

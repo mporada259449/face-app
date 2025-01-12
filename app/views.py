@@ -57,9 +57,45 @@ def compare_images():
     #flash("Files are proccesed by our model")
     result = send_compare_request(img_path_1=saved_files[0], img_path_2=saved_files[1])
 
-    if result['is_similar']:
-        flash(f"Similarity_score: {result['similarity_score']}. This is the same person")
+    if "is_similar" in result:
+        if result["is_similar"]:
+            flash(f"Similarity_score: {result['similarity_score']}. This is the same person")
+        else:
+            flash(f"Similarity_score: {result['similarity_score']}. This is not the same person")
+        
+        log_event(
+            msg=f"Files {saved_files[0]}, {saved_files[1]} were compared with score {result['similarity_score']}",
+            msg_type="app"
+        )
+        return redirect(url_for("views.hello"))
+
+    elif "error" in result:
+        # Handle the error case
+        error_message = result.get("error", "Unknown error")
+        error_details = result.get("details", "No additional details provided")
+        error_status_code = result.get("status_code", "Unknown status code")
+        correlation_id = result.get("correlation_id", "No correlation ID")
+
+        flash(
+            f"Error occurred! Status Code: {error_status_code}, Error: {error_message}, "
+            f"Details: {error_details}, Correlation ID: {correlation_id}"
+        )
+        log_event(
+            msg=(
+                f"Error occurred while comparing files: {saved_files[0]}, {saved_files[1]} - "
+                f"Status Code: {error_status_code}, Error: {error_message}, Details: {error_details}, "
+                f"Correlation ID: {correlation_id}"
+            ),
+            msg_type="error"
+        )
+        return redirect(url_for("views.hello"))
+
     else:
-        flash(f"Similarity_score: {result['similarity_score']}. This is not the same person")
-    log_event(msg=f"Files {saved_files[0]}, {saved_files[1]} were compared with score {result['similarity_score']}", msg_type='app')
-    return redirect(url_for('views.hello'))
+        # Handle unexpected response
+        correlation_id = result.get("correlation_id", "No correlation ID")
+        flash("Unexpected response from the comparison service. Correlation ID: {correlation_id}")
+        log_event(
+            msg=f"Unexpected response for files {saved_files[0]}, {saved_files[1]}. Response: {result}, Correlation ID: {correlation_id}",
+            msg_type="error"
+        )
+        return redirect(url_for("views.hello"))
