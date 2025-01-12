@@ -32,11 +32,6 @@ def compare_images():
         flash('No file was provided')
         redirect(request.url)
 
-    #if session.get('subdir', False):
-    #    subdir = session['subdir']
-    #else:
-    #    subdir = uuid.uuid4().hex
-    #    session['subdir'] = subdir
     subdir = uuid.uuid4().hex
     
     if not os.path.exists(os.path.join(UPLOAD_FLODER, subdir)):
@@ -53,8 +48,10 @@ def compare_images():
             img_path = os.path.join(UPLOAD_FLODER, subdir, filename)
             file.save(img_path)
             saved_files.append(img_path)
+        else:
+            flash("Unsupported filetype")
+            return redirect(url_for('views.hello'))
     
-    #flash("Files are proccesed by our model")
     result = send_compare_request(img_path_1=saved_files[0], img_path_2=saved_files[1])
 
     if "is_similar" in result:
@@ -70,7 +67,6 @@ def compare_images():
         return redirect(url_for("views.hello"))
 
     elif "error" in result:
-        # Handle the error case
         error_message = result.get("error", "Unknown error")
         error_details = result.get("details", "No additional details provided")
         error_status_code = result.get("status_code", "Unknown status code")
@@ -91,7 +87,6 @@ def compare_images():
         return redirect(url_for("views.hello"))
 
     else:
-        # Handle unexpected response
         correlation_id = result.get("correlation_id", "No correlation ID")
         flash("Unexpected response from the comparison service. Correlation ID: {correlation_id}")
         log_event(
