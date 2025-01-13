@@ -5,3 +5,8 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.getenv('FLASK_SECRET_KEY')
     CSRF_ENABLED = False
+
+class TestConfig:
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    SECRET_KEY = os.getenv('FLASK_SECRET_KEY')
