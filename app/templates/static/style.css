@@ -1,0 +1,37 @@
+/* style.css */
+
+/* Globalne tło */
+body {
+    background-color: #f8f9fa; /* Jasnoszare tło */
+    font-family: 'Arial', sans-serif;
+}
+
+/* Główne nagłówki */
+h1, h2, h3 {
+    color: #343a40; /* Ciemny kolor */
+}
+
+/* Przycisk */
+.btn-custom {
+    background-color: #007bff; /* Niebieski */
+    color: white;
+    border-radius: 5px;
+}
+
+.btn-custom:hover {
+    background-color: #0056b3; /* Ciemniejszy niebieski */
+}
+
+/* Nawigacja */
+.navbar {
+    background-color: #343a40; /* Ciemna nawigacja */
+    color: white;
+}
+
+.navbar a {
+    color: white;
+}
+
+.navbar a:hover {
+    text-decoration: underline;
+}
