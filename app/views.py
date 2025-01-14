@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, redirect, flash, url_for, request, json
+from flask import Blueprint, render_template, redirect, flash, url_for, request, json
 from werkzeug.utils import secure_filename
 from .logging import log_event
 import requests
@@ -82,7 +82,7 @@ def compare_images():
                 f"Status Code: {error_status_code}, Error: {error_message}, Details: {error_details}, "
                 f"Correlation ID: {correlation_id}"
             ),
-            msg_type="error"
+            msg_type="app"
         )
         return redirect(url_for("views.hello"))
 
@@ -91,6 +91,6 @@ def compare_images():
         flash("Unexpected response from the comparison service. Correlation ID: {correlation_id}")
         log_event(
             msg=f"Unexpected response for files {saved_files[0]}, {saved_files[1]}. Response: {result}, Correlation ID: {correlation_id}",
-            msg_type="error"
+            msg_type="app"
         )
         return redirect(url_for("views.hello"))
