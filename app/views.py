@@ -52,6 +52,7 @@ def compare_images():
             flash("Unsupported filetype")
             return redirect(url_for('views.hello'))
     
+
     result = send_compare_request(img_path_1=saved_files[0], img_path_2=saved_files[1])
 
     if "is_similar" in result:
@@ -82,15 +83,15 @@ def compare_images():
                 f"Status Code: {error_status_code}, Error: {error_message}, Details: {error_details}, "
                 f"Correlation ID: {correlation_id}"
             ),
-            msg_type="error"
+            msg_type="app"
         )
         return redirect(url_for("views.hello"))
 
     else:
         correlation_id = result.get("correlation_id", "No correlation ID")
-        flash("Unexpected response from the comparison service. Correlation ID: {correlation_id}")
+        flash(f"Unexpected response from the comparison service. Correlation ID: {correlation_id}")
         log_event(
             msg=f"Unexpected response for files {saved_files[0]}, {saved_files[1]}. Response: {result}, Correlation ID: {correlation_id}",
-            msg_type="error"
+            msg_type="app"
         )
         return redirect(url_for("views.hello"))
