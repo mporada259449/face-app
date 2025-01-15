@@ -3,7 +3,7 @@ FROM python:3.11
 RUN mkdir /mnt/images
 COPY pytest.ini requirements.txt /face-app/
 COPY app/ /face-app/app
-COPY tests/ face-app/tests
+COPY tests/ /face-app/tests
 WORKDIR /face-app/tests
 RUN pip3 install -r ../requirements.txt
 RUN pip3 install coverage pytest
