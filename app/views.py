@@ -21,6 +21,7 @@ def send_compare_request(img_path_1, img_path_2):
     result_text = json.loads(result.content.decode()) 
     return result_text
 
+
 @views.route('/')
 def hello():
     return render_template('main-page.html')
