@@ -177,7 +177,6 @@ async def compare_video_faces(
             return (score + 1) / 2  
 
         similarity_scores = await asyncio.gather(*(process_pair(frame) for frame in processed_frames))
-        print(similarity_scores)
         aggregated_similarity = sum(similarity_scores) / len(similarity_scores)
         is_similar = aggregated_similarity >= CURRENT_THRESHOLD
 
