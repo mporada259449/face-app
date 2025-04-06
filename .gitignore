@@ -6,5 +6,5 @@ __pycache__/
 .env
 migrations/
 .coverage
-src_models/ja.mp4
-src_models/ja.jpg
+*ja.mp4
+*ja.jpg

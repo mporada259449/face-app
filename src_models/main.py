@@ -10,14 +10,14 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from uuid import uuid4
 
-from models import FACE_VERIFIER
-from models.utils import cosine_similarity
-from request_utils import process_image, process_image_sync
+from src_models.models import FACE_VERIFIER
+from src_models.models.utils import cosine_similarity
+from src_models.request_utils import process_image, process_image_sync
 
 
 # Initialize a global threshold
 CURRENT_THRESHOLD: float = 0.7  # Default threshold
-VIDEO_FRAME_SAMPLE_COUNT = 5
+VIDEO_FRAME_SAMPLE_COUNT: int = 5
 
 
 @asynccontextmanager

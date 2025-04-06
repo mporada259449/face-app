@@ -4,7 +4,7 @@ import numpy as np
 
 from fastapi import HTTPException
 
-from models import FACE_DETECTOR, FACE_LANDMARKER
+from src_models.models import FACE_DETECTOR, FACE_LANDMARKER
 
 # def get_device() -> str:
 #     """
