@@ -1,0 +1,45 @@
+- name: Deploy Docker Compose stack
+  hosts: ec2
+  become: true
+  tasks:
+
+    - name: Install required packages
+      dnf:
+        name:
+        - git
+        - git-lfs
+        state: present
+        update_cache: yes
+
+    - name: Clone Repository
+      git:
+        repo: "https://github.com/mporada259449/face-app"
+        dest: /home/{{ ansible_user }}/}/face-app
+        version: dev/aws-deployment
+
+    - name: Install docker
+      shell: bash scripts/prepare-env.sh
+      args:
+        chdir: /home/{{ ansible_user }}/}/face-app
+
+    - name: Add user to docker group
+      user:
+        name: "{{ ansible_user }}"
+        groups: docker
+        append: yes
+
+    - name: Enable and start Docker
+      systemd:
+        name: docker
+        enabled: yes
+        state: started
+
+    - name: Create database
+      shell: bash scripts/create-db.sh
+      args:
+        chdir: /home/{{ ansible_user }}/}/face-app
+    
+    - name: Create Stack
+      shell: bash scripts/deploy-service.sh
+      args:
+        chdir: /home/{{ ansible_user }}/}/face-app

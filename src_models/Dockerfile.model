@@ -1,9 +1,9 @@
 FROM python:3.11
 
 COPY . /app/src_models
-WORKDIR /app/src_models
+WORKDIR /app/
 RUN  apt update && apt install libgl1-mesa-glx -y
-RUN pip3 install -r req.txt
+RUN pip3 install -r src_models/req.txt
 
-CMD [ "uvicorn", "main:app", "--reload", "--host", "0.0.0.0", "--port", "5000" ]
+CMD [ "uvicorn", "src_models.main:app", "--reload", "--host", "0.0.0.0", "--port", "5000" ]
 
