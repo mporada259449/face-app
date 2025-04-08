@@ -8,19 +8,15 @@
         name:
         - git
         - git-lfs
+        - docker
         state: present
         update_cache: yes
 
-    - name: Clone Repository
-      git:
-        repo: "https://github.com/mporada259449/face-app"
-        dest: /home/{{ ansible_user }}/}/face-app
-        version: dev/aws-deployment
-
-    - name: Install docker
-      shell: bash scripts/prepare-env.sh
-      args:
-        chdir: /home/{{ ansible_user }}/}/face-app
+    - name: Install Docker Compose plugin
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.24.2/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
 
     - name: Add user to docker group
       user:
@@ -34,12 +30,23 @@
         enabled: yes
         state: started
 
+    - name: Clone Repository
+      git:
+        repo: "https://github.com/mporada259449/face-app"
+        dest: /home/{{ ansible_user }}/face-app
+        version: dev/aws-deployment
+
+    - name: Download model
+      shell: git-lfs pull
+      args:
+        chdir: /home/{{ ansible_user }}/face-app
+
     - name: Create database
       shell: bash scripts/create-db.sh
       args:
-        chdir: /home/{{ ansible_user }}/}/face-app
+        chdir: /home/{{ ansible_user }}/face-app
     
     - name: Create Stack
-      shell: bash scripts/deploy-service.sh
+      shell: bash scripts/deploy-services.sh
       args:
-        chdir: /home/{{ ansible_user }}/}/face-app
+        chdir: /home/{{ ansible_user }}/face-app
