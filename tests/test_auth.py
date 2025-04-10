@@ -1,43 +1,34 @@
 import pytest
 from app import create_app, db
-from app.config import TestConfig
-from app.models import User
-
-@pytest.fixture(scope='module')
-def app():
-    app = create_app(TestConfig)
-    with app.app_context():
-        db.create_all()
-        yield app
-        db.drop_all()
-
-@pytest.fixture(scope='module')
-def client(app):
-    return app.test_client()
-
-@pytest.fixture
-def db_session(app):
-    with app.app_context():
-        session = db.session
-        yield session
-        session.rollback()
-        session.remove()
-
-@pytest.fixture
-def create_user(db_session):
-    user = User(
-        id=1,
-        username='admin',
-        password='testpassword',
-        is_admin=True
-    )
-    db_session.add(user)
-    yield db_session.query(User).filter_by(id=1).one()
-    db_session.query(User).filter_by(id=1).delete()
-    db_session.commit()
 
 def test_login_route(client, create_user):
     """Test the login route."""
     response = client.post('/login', data={'username': 'admin', 'password': 'testpassword'}, follow_redirects=True)
     assert response.status_code == 200
     assert b'Login successful' in response.data
+
+def test_login_failure(client, create_user):
+    response = client.post('/login', data={'username': 'admin', 'password': 'worngpassword'}, follow_redirects=True)
+    assert response.status_code == 200
+    assert b'Invalid password or login' in response.data
+
+def test_login_no_data(client, create_user):
+    response = client.post('/login', data={}, follow_redirects=True)
+    assert response.status_code == 200
+    assert b'Login' in response.data
+
+def test_logout_user(client, create_user):
+    with client.session_transaction() as sess:
+        sess['user_id'] = 1
+        sess['is_admin'] = True
+        sess['username'] = 'admin'
+
+    response = client.get('/logout', follow_redirects=True)
+
+    assert response.status_code == 200
+    assert b"You have been logged out" in response.data
+
+    with client.session_transaction() as sess:
+        assert 'user_id' not in sess
+        assert 'is_admin' not in sess
+        assert 'username' not in sess

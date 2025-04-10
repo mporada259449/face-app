@@ -8,3 +8,4 @@ migrations/
 .coverage
 *ja.mp4
 *ja.jpg
+.pytest_cache/
