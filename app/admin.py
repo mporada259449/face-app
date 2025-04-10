@@ -15,7 +15,7 @@ def admin_page():
 def set_threshold():
     if not session.get('is_admin'):
         flash("You don't have permissions to do that")
-        return redirect(url_for('viwes.hello'))
+        return redirect(url_for('views.hello'))
     
     data = request.form
     threshold = data.get('threshold')
