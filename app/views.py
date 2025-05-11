@@ -7,7 +7,7 @@ import uuid
 views = Blueprint('views', __name__) 
 
 UPLOAD_FLODER='/mnt/images/'
-ALLOWED_EXTENSIONS=['jpg', 'png', 'jpeg', 'webp']
+ALLOWED_EXTENSIONS=['jpg', 'png', 'jpeg', 'webp', 'webm', 'mp4', 'avi']
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -37,12 +37,12 @@ def compare_images():
     
     if not os.path.exists(os.path.join(UPLOAD_FLODER, subdir)):
         os.mkdir(os.path.join(UPLOAD_FLODER, subdir))
+
     saved_files = []
     for key, file in request.files.items():
+
         if file.filename == '':
-            flash('No selected file')
-            log_event(msg=f'There was an attempt to compere images', msg_type='app')
-            redirect(request.url)
+            continue
         if file and allowed_file(file.filename):
             _, extension = os.path.splitext(file.filename)
             filename = secure_filename(key) + extension
