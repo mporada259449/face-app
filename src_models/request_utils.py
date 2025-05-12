@@ -87,7 +87,7 @@ async def process_image(file: UploadFile) -> np.ndarray:
     image_data = await file.read()
 
     # Validate MIME type
-    #validate_file_mime(image_data)
+    validate_file_mime(image_data)
 
     # Decode image using OpenCV
     image_array = np.frombuffer(image_data, dtype=np.uint8)
