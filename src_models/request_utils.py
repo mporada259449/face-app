@@ -6,7 +6,7 @@ from fastapi import HTTPException, UploadFile
 from src_models.models.utils import detect_align_crop_face
 from src_models.models.face_verifier import preprocess_image_direct
 
-ALLOWED_EXTENSIONS = (".jpg", ".jpeg", ".png", ".tiff", ".webp")
+ALLOWED_EXTENSIONS = (".jpg", ".jpeg", ".png", ".tiff", ".webp", ".mp4", "webm")
 ALLOWED_MIME_TYPES = ("image/jpeg", "image/png", "image/tiff", "image/webp")
 
 

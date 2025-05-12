@@ -184,7 +184,7 @@ async def compare_video_faces(
             status_code=200,
             content={
                 "status_code": 200,
-                "aggregated_similarity": aggregated_similarity,
+                "similarity_score": aggregated_similarity,
                 "is_similar": is_similar,
                 "correlation_id": correlation_id,
             },
