@@ -17,7 +17,7 @@ def test_compare_images_wrong_extension(mocked_exists, client):
         'file2': (BytesIO(b'test image data 2'), 'file2.txt')
     }
 
-    response = client.post('/compare_images', data=data, content_type='multipart/form-data', follow_redirects = True)
+    response = client.post('/compare_media', data=data, content_type='multipart/form-data', follow_redirects = True)
 
     assert response.status_code == 200
     assert b'Unsupported filetype' in response.data
@@ -26,15 +26,32 @@ def test_compare_images_wrong_extension(mocked_exists, client):
 def test_compare_images_same_person(mocked_compare, client):
     mocked_compare.return_value = {'is_similar': True, 'similarity_score': 0.9}
     data = {
-        'file1': (BytesIO(b'test image data 1'), 'file1.png'),
-        'file2': (BytesIO(b'test image data 2'), 'file2.png')
+        'video1': (BytesIO(b'test video data'), ''), 
+        'image1': (BytesIO(b'test image data 1'), 'file1.png'),
+        'image2': (BytesIO(b'test image data 2'), 'file2.png')
     }
 
-    response = client.post('/compare_images', data=data, content_type='multipart/form-data', follow_redirects = True)
+    response = client.post('/compare_media', data=data, content_type='multipart/form-data', follow_redirects = True)
 
     assert response.status_code == 200
     assert mocked_compare.call_count == 1
-    assert len(mocked_compare.call_args[1].keys()) == 2
+    assert len(mocked_compare.call_args[1].keys()) == 3
+    assert b'Similarity_score: 0.9. This is the same person' in response.data
+
+@patch('app.views.send_compare_request')
+def test_compare_video_same_person(mocked_compare, client):
+    mocked_compare.return_value = {'is_similar': True, 'similarity_score': 0.9}
+    data = {
+        'image1': (BytesIO(b'test video data'), ''), 
+        'video1': (BytesIO(b'test image data 1'), 'file1.mp4'),
+        'image2': (BytesIO(b'test image data 2'), 'file2.png')
+    }
+
+    response = client.post('/compare_media', data=data, content_type='multipart/form-data', follow_redirects = True)
+
+    assert response.status_code == 200
+    assert mocked_compare.call_count == 1
+    assert len(mocked_compare.call_args[1].keys()) == 3
     assert b'Similarity_score: 0.9. This is the same person' in response.data
 
 @patch('app.views.send_compare_request')
@@ -45,11 +62,11 @@ def test_compare_images_not_same_person(mocked_compare, client):
         'file2': (BytesIO(b'test image data 2'), 'file2.png')
     }
 
-    response = client.post('/compare_images', data=data, content_type='multipart/form-data', follow_redirects = True)
+    response = client.post('/compare_media', data=data, content_type='multipart/form-data', follow_redirects = True)
 
     assert response.status_code == 200
     assert mocked_compare.call_count == 1
-    assert len(mocked_compare.call_args[1].keys()) == 2
+    assert len(mocked_compare.call_args[1].keys()) == 3
     assert b'Similarity_score: 0.3. This is not the same person' in response.data
 
 @patch('app.views.send_compare_request')
@@ -63,11 +80,11 @@ def test_compare_images_error(mocked_compare, client):
         'file2': (BytesIO(b'test image data 2'), 'file2.png')
     }
 
-    response = client.post('/compare_images', data=data, content_type='multipart/form-data', follow_redirects = True)
+    response = client.post('/compare_media', data=data, content_type='multipart/form-data', follow_redirects = True)
 
     assert response.status_code == 200
     assert mocked_compare.call_count == 1
-    assert len(mocked_compare.call_args[1].keys()) == 2
+    assert len(mocked_compare.call_args[1].keys()) == 3
     assert b"Error occurred! Status Code: 404, Error: some error" in response.data
 
 @patch('app.views.send_compare_request')
@@ -78,11 +95,11 @@ def test_compare_images_correlation(mocked_compare, client):
         'file2': (BytesIO(b'test image data 2'), 'file2.png')
     }
 
-    response = client.post('/compare_images', data=data, content_type='multipart/form-data', follow_redirects = True)
+    response = client.post('/compare_media', data=data, content_type='multipart/form-data', follow_redirects = True)
 
     assert response.status_code == 200
     assert mocked_compare.call_count == 1
-    assert len(mocked_compare.call_args[1].keys()) == 2
+    assert len(mocked_compare.call_args[1].keys()) == 3
     assert b"Unexpected response from the comparison service" in response.data
 
 def test_allowed_file():
