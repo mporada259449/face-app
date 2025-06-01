@@ -34,7 +34,7 @@
       git:
         repo: "https://github.com/mporada259449/face-app"
         dest: /home/{{ ansible_user }}/face-app
-        version: dev/aws-deployment
+        version: master
 
     - name: Download model
       shell: git-lfs pull
