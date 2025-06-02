@@ -69,5 +69,5 @@ def test_compare_video_faces_success(clear_face_path, test_video_path):
     response = client.post("/faceapp/compare_video/", files=files)
     data = response.json()
     assert response.status_code == 200, response.json()
-    assert "aggregated_similarity" in data
-    assert 0 <= data["aggregated_similarity"] <= 1
+    assert "similarity_score" in data
+    assert 0 <= data["similarity_score"] <= 1
